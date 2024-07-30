@@ -15,15 +15,15 @@ import java.util.List;
 @RequestMapping("/api/clientes")
 public class ClientController {
 
-    private ClienteRepository clientes;
+    private ClienteRepository repository;
 
-    public ClientController(ClienteRepository clientes) {
-        this.clientes = clientes;
+    public ClientController(ClienteRepository repository) {
+        this.repository = repository;
     }
 
     @GetMapping("/{id}")
     public Client getClientById( @PathVariable Integer id){
-        return clientes.findById(id)
+        return repository.findById(id)
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND, "Não encontrado"));
     }
@@ -34,21 +34,21 @@ public class ClientController {
                 .matching()
                 .withIgnoreCase()
                 .withStringMatcher( ExampleMatcher.StringMatcher.CONTAINING);
-        Example example = Example.of(filtro, matcher);
-        return clientes.findAll(example);
+        Example<Client> example = Example.of(filtro, matcher);
+        return repository.findAll(example);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Client save(@RequestBody Client client){
-        return clientes.save(client);
+        return repository.save(client);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id){
-        clientes.findById(id)
-                .map(client -> { clientes.delete(client);
+        repository.findById(id)
+                .map(client -> { repository.delete(client);
                 return client;
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não encontrado"));
@@ -58,10 +58,10 @@ public class ClientController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update( @PathVariable Integer id ,@RequestBody Client cliente){
-         clientes.findById(id)
+         repository.findById(id)
                 .map(clienteExist -> {
                     cliente.setId(clienteExist.getId());
-                    clientes.save(cliente);
+                    repository.save(cliente);
                     return clienteExist;
                 }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não encontrado"));
 
