@@ -32,7 +32,7 @@ public class ProductController {
         ExampleMatcher matcher = ExampleMatcher
                 .matching()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-       Example example = Example.of(filter, matcher);
+       Example<Product> example = Example.of(filter, matcher);
 
        return productRepository.findAll(example);
     }
@@ -55,7 +55,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public Product update(@PathVariable Integer id, @RequestBody Product produto){
          productRepository.findById(id)
                 .map(product -> {
@@ -63,6 +63,6 @@ public class ProductController {
                     return productRepository.save(produto);
                 })
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado"));
-        return null;
+         return produto;
     }
 }

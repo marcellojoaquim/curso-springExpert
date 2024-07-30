@@ -49,7 +49,7 @@ public class ClientController {
     public void delete(@PathVariable Integer id){
         repository.findById(id)
                 .map(client -> { repository.delete(client);
-                return client;
+                return Void.TYPE;
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não encontrado"));
 
