@@ -1,6 +1,7 @@
 package persistencia.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,10 @@ public interface ClienteRepository extends JpaRepository<Client, Integer > {
     List<Client> findByNomeLikeOrId(String nome, Integer id);
     boolean existsByNomeLike(String nome);
     Client findByCpf(String cpf);
+
+    @Query("delete from Client c where c.nome = :nome ")
+    @Modifying
+    void deleteByNome(String nome);
 
     @Query("select c from Client c left join fetch c.pedidos p where c.id = :id ")
     Client findClientFetchPedido( @Param("id") Integer id);
