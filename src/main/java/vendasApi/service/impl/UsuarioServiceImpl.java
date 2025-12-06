@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import vendasApi.domain.entity.Usuario;
 import vendasApi.domain.repository.UsuarioRepository;
 
+import javax.transaction.Transactional;
+
 @Service
 public class UsuarioServiceImpl implements UserDetailsService {
 
@@ -19,23 +21,24 @@ public class UsuarioServiceImpl implements UserDetailsService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Transactional
     public Usuario salvar(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByLogin(userName)
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("usuario não encontrado"));
 
         String[] roles = usuario.isAdmin() ?
-                new String[] {"USER", "ADMIN"} : new String[]{"USER"};
+                new String[] {"ADMIN", "USER"} : new String[]{"USER"};
 
         return User
                 .builder()
                 .username(usuario.getLogin())
                 .password(usuario.getSenha())
-                .roles()
+                .roles(roles)
                 .build();
     }
 }
