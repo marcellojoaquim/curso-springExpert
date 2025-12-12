@@ -1,4 +1,4 @@
-package vendasApi;
+package vendasApi.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
