@@ -19,11 +19,16 @@ import vendasApi.service.impl.UsuarioServiceImpl;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     @Autowired
     private UsuarioServiceImpl usuarioService;
+
     @Autowired
-    JwtService jwtService;
+    private JwtService jwtService;
+
+//    public SecurityConfig(JwtService jwtService, UsuarioServiceImpl usuarioService) {
+//        this.jwtService = jwtService;
+//        this.usuarioService = usuarioService;
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -55,7 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
     }

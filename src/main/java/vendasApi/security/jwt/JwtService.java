@@ -22,7 +22,7 @@ public class JwtService {
     private String chaveAssinatura;
 
     public String gerarToken(Usuario usuario ) {
-        Long expString = Long.valueOf(expiracao);
+        long expString = Long.valueOf(expiracao);
         LocalDateTime dataHoraExpiracao = LocalDateTime.now().plusMinutes(expString);
 
         Date date = Date.from(dataHoraExpiracao.atZone(ZoneId.systemDefault()).toInstant());
@@ -53,6 +53,6 @@ public class JwtService {
     }
 
     public String obterLoginUsuario(String token) throws ExpiredJwtException {
-        return (String) obterCaims(token).getSubject();
+        return obterCaims(token).getSubject();
     }
 }
