@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import persistencia.excepition.SenhaInvalidaException;
 import vendasApi.domain.entity.Usuario;
 import vendasApi.domain.repository.UsuarioRepository;
 
@@ -40,5 +41,14 @@ public class UsuarioServiceImpl implements UserDetailsService {
                 .password(usuario.getSenha())
                 .roles(roles)
                 .build();
+    }
+
+    public UserDetails autenticar(Usuario usuario) {
+        UserDetails details = loadUserByUsername(usuario.getLogin());
+        boolean matcheSenhas = encoder.matches(usuario.getSenha(), details.getPassword());
+        if(matcheSenhas) {
+            return details;
+        }
+        throw new SenhaInvalidaException();
     }
 }
