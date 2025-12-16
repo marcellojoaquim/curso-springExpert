@@ -1,5 +1,6 @@
 package vendasApi.rest.controller;
 
+import io.swagger.annotations.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,6 +23,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/pedidos")
+@Api("Api Pedidos")
 public class PedidoController {
 
     private PedidoService service;
@@ -32,13 +34,23 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(CREATED)
+    @ApiOperation("Criação de um novo pedido")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Pedido cadastrado com sucesso"),
+            @ApiResponse(code = 400, message = "Erro de validação")
+    })
     public Integer save(@RequestBody @Valid PedidoDTO pedidoDTO){
         Pedido pedido = service.salvar(pedidoDTO);
         return pedido.getId();
     }
 
     @GetMapping("/{id}")
-    public InformacoesPedidoDTO getById(@PathVariable Integer id){
+    @ApiOperation("Buscar um pedido por ID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Pedido encontrado com sucesso"),
+            @ApiResponse(code = 404, message = "Pedido não encontrado")
+    })
+    public InformacoesPedidoDTO getById(@PathVariable @ApiParam("Id do pedido") Integer id){
         return service
                 .obterPedidoComplento(id)
                 .map( p -> converter(p))
@@ -60,8 +72,13 @@ public class PedidoController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
+    @ApiOperation("Atualiza um pedido")
+    @ApiResponses({
+            @ApiResponse(code=204, message = "No content"),
+            @ApiResponse(code = 404, message = "Pedido não encontrado")
+    })
     public void updateStatus(
-            @PathVariable Integer id,
+            @PathVariable @ApiParam("ID do pedido") Integer id,
             @RequestBody AtualizacaoStatusPedidoDTO dto){
         String novoStatus = dto.getNovoStatus();
         service.atualizaStatus(id, StatusPedido.valueOf(novoStatus));
